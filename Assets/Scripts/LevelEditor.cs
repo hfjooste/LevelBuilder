@@ -183,6 +183,9 @@ namespace ThirdPixelGames.LevelBuilder
                 }
             }
 
+            // Store the default background color
+            var defaultColor = GUI.backgroundColor;
+
             // Loop through the level data
             for (var y = 0; y < sizeY; y++)
             {
@@ -213,6 +216,44 @@ namespace ThirdPixelGames.LevelBuilder
 
                 EditorGUILayout.EndHorizontal();
             }
+
+            // Reset the background color
+            GUI.backgroundColor = defaultColor;
+
+            // Add the legend title
+            EditorGUILayout.Space(30);
+            GUILayout.Label("Legend:", EditorStyles.boldLabel);
+            EditorGUILayout.Space(5);
+
+            // Loop through all items in the palette
+            foreach (var item in palette.items)
+            {
+                // Start the horizontal layout
+                EditorGUILayout.BeginHorizontal();
+
+                // Set the background color
+                GUI.backgroundColor = item.color;
+
+                // Display a small button for the palette item
+                if (GUILayout.Button(string.Empty, GUILayout.Width(18), GUILayout.Height(18)))
+                {
+                    // Display the palette item's information if clicked
+                    var text = $"Name: {item.name}\nID: {item.id}\nColor: {item.color}\nOffset: {item.offset}\nPrefab: {item.prefab}";
+                    EditorUtility.DisplayDialog($"{item.name} Info", text, "OK");
+                }
+
+                // Revert the background color
+                GUI.backgroundColor = defaultColor;
+
+                // Display the palette item's name
+                GUILayout.Label(item.name);
+
+                // End the horizontal layout
+                EditorGUILayout.EndHorizontal();
+            }
+
+            // Reset the background color
+            GUI.backgroundColor = defaultColor;
 
             // Save the level data
             _levelData.stringValue = JsonHelper.ToJson(data.ToArray());
