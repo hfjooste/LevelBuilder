@@ -111,23 +111,35 @@ namespace ThirdPixelGames.LevelBuilder
             // Adjust the grid display size
             _gridSize = EditorGUILayout.IntSlider("Grid Display Size", _gridSize, 20, 100);
 
-            // Add a clear level button
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Clear level"))
-            {
-                // Reset the level data if the button is pressed
-                _levelData.stringValue = string.Empty;
-            }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
-
             // Ensure we have a valid Size X and Size Y value
             var sizeX = (int)Mathf.Max(_sizeX.intValue, 0);
             var sizeY = (int)Mathf.Max(_sizeY.intValue, 0);
 
+            // Start the horizontal layout for the buttons
+            EditorGUILayout.BeginHorizontal();
+
             // Try to load the saved level data
-            var data = string.IsNullOrEmpty(_levelData.stringValue) || _levelData.stringValue.Replace(" ", "") == "{}" 
+            var data = string.IsNullOrEmpty(_levelData.stringValue) || _levelData.stringValue.Replace(" ", "") == "{}"
                 ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_levelData.stringValue).ToList();
+
+            // Add a surround button
+            if (GUILayout.Button("Surround"))
+            {
+                // Surround the level with the selected palette item
+                Surround(ref data, sizeX, sizeY);
+            }
+
+            // Add a clear level button
+            if (GUILayout.Button("Clear level"))
+            {
+                // Reset the level data if the button is pressed
+                _levelData.stringValue = string.Empty;
+                data = new List<LevelData>();
+            }
+
+            // End the horizontal layout for the buttons
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(10);
 
             // Populate the level data variable (if needed)
             for (var x = 0; x < sizeX; x++)
@@ -188,6 +200,46 @@ namespace ThirdPixelGames.LevelBuilder
 
             // Apply all changes to the serialized object
             serializedObject.ApplyModifiedProperties();
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Surround the level with the selected palette item
+        /// </summary>
+        /// <param name="data">The current level data</param>
+        /// <param name="sizeX">The horizontal size of the level</param>
+        /// <param name="sizeY">The vertical size of the level</param>
+        private void Surround(ref List<LevelData> data,  int sizeX, int sizeY)
+        {
+            // Get the correct palette item ID
+            var palette = _savedPalette.objectReferenceValue as Palette;
+            var id = _selected < 0 || _selected >= palette.items.Count
+                            ? string.Empty : palette.items[_selected].id;
+
+            // Loop through the horizontal items
+            for (var x = 0; x < sizeX; x++)
+            {
+                // Get the top and bottom items
+                var itemTop = data.FirstOrDefault(fd => fd.x == x && fd.y == 0);
+                var itemBottom = data.FirstOrDefault(fd => fd.x == x && fd.y == sizeY - 1);
+
+                // Set the palette ID
+                itemTop.paletteId = id;
+                itemBottom.paletteId = id;
+            }
+
+            // Loop through the vertical items
+            for (var y = 0; y < sizeY; y++)
+            {
+                // Get the left and right items
+                var itemLeft = data.FirstOrDefault(fd => fd.x == 0 && fd.y == y);
+                var itemRight = data.FirstOrDefault(fd => fd.x == sizeX - 1 && fd.y == y);
+
+                // Set the palette ID
+                itemLeft.paletteId = id;
+                itemRight.paletteId = id;
+            }            
         }
         #endregion
     }
