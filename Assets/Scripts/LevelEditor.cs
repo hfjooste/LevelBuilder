@@ -125,8 +125,23 @@ namespace ThirdPixelGames.LevelBuilder
             // Add a surround button
             if (GUILayout.Button("Surround"))
             {
-                // Surround the level with the selected palette item
-                Surround(ref data, sizeX, sizeY);
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog("Surround", "Are you sure you want to surround the level with the selected item? This process can not be reverted", "Yes", "No"))
+                {
+                    // Surround the level with the selected palette item
+                    Surround(ref data, sizeX, sizeY);
+                }
+            }
+
+            // Add a fill button
+            if (GUILayout.Button("Fill Empty"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog("Fill Empty", "Are you sure you want to fill the empty tiles of the level with the selected item? This process can not be reverted", "Yes", "No"))
+                {
+                    // Fill the empty tiles of the level with the selected palette item
+                    FillEmpty(ref data, sizeX, sizeY);
+                }
             }
 
             // Add a clear level button
@@ -244,6 +259,30 @@ namespace ThirdPixelGames.LevelBuilder
                 itemLeft.paletteId = id;
                 itemRight.paletteId = id;
             }            
+        }
+
+        /// <summary>
+        /// Fill the empty tiles of the level with the selected palette item
+        /// </summary>
+        /// <param name="data">The current level data</param>
+        /// <param name="sizeX">The horizontal size of the level</param>
+        /// <param name="sizeY">The vertical size of the level</param>
+        private void FillEmpty(ref List<LevelData> data, int sizeX, int sizeY)
+        {
+            // Get the correct palette item ID
+            var palette = _savedPalette.objectReferenceValue as Palette;
+            var id = _selected < 0 || _selected >= palette.items.Count
+                            ? string.Empty : palette.items[_selected].id;
+
+            // Find the empty items
+            var emptyItems = data.Where(w => string.IsNullOrEmpty(w.paletteId));
+
+            // Loop through the empty items
+            foreach (var item in emptyItems)
+            {
+                // Apply the new palette item
+                item.paletteId = id;
+            }     
         }
         #endregion
     }

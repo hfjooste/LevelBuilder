@@ -28,3 +28,8 @@ MonoBehaviour:
     color: {r: 1, g: 0, b: 0, a: 1}
     prefab: {fileID: 786444549207441793, guid: 22a9a3d5890b16f4da1ad70147dcc7f6, type: 3}
     offset: {x: 0, y: -0.5, z: 0}
+  - name: Background
+    id: e3112dbb-a831-4ac6-b332-8876f17f152a
+    color: {r: 0.46226418, g: 0.2584706, b: 0, a: 1}
+    prefab: {fileID: 5603780203012798594, guid: 4ef829036ad66214ea149ee8c0902ded, type: 3}
+    offset: {x: 0, y: 0, z: 1}
