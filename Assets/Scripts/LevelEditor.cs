@@ -1,14 +1,4 @@
-﻿/*
- 2021 © Third Pixel Games. All Rights Reserved
-
- All information contained herein is and remains the property of Third Pixel Games. The intellectual 
- and technical concepts contained herein are proprietary to Third Pixel Games and may be covered by 
- patents and patents in process and are protected by trade secret and copyright laws. Dissemination 
- of this information or reproduction of this material (including source code) is strictly forbidden 
- unless prior written consent is obtained from Third Pixel Games.
-*/
-
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 namespace ThirdPixelGames.LevelBuilder
 {
     using System.Linq;
@@ -24,6 +14,11 @@ namespace ThirdPixelGames.LevelBuilder
     public class LevelEditor : Editor
     {
         #region Private Variables
+        /// <summary>
+        /// The type of level to generate
+        /// </summary>
+        private SerializedProperty _levelType;
+
         /// <summary>
         /// The Size X value inside the level object
         /// </summary>
@@ -62,6 +57,7 @@ namespace ThirdPixelGames.LevelBuilder
         private void OnEnable()
         {
             // Find the properties we need to build a level
+            _levelType = serializedObject.FindProperty("levelType");
             _sizeX = serializedObject.FindProperty("sizeX");
             _sizeY = serializedObject.FindProperty("sizeY");
             _savedPalette = serializedObject.FindProperty("palette");
@@ -89,6 +85,9 @@ namespace ThirdPixelGames.LevelBuilder
                 EditorGUILayout.LabelField("Please specify a palette");
                 return;
             }
+
+            // Edit the level type
+            _levelType.enumValueIndex = (int)(LevelType)EditorGUILayout.EnumPopup("Level Type", (LevelType)_levelType.enumValueIndex);
 
             // Edit the Size X and Size Y variables
             EditorGUILayout.PropertyField(_sizeX);
