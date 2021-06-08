@@ -48,6 +48,11 @@ namespace ThirdPixelGames.LevelBuilder
         /// The palette selected index
         /// </summary>
         private int _selected = 0;
+
+        /// <summary>
+        /// The size of each block in the grid
+        /// </summary>
+        private int _gridSize = 20;
         #endregion
 
         #region Unity Methods
@@ -101,7 +106,10 @@ namespace ThirdPixelGames.LevelBuilder
 
             // Display the dropdown list with all the available items
             _selected = EditorGUILayout.Popup("Item", _selected, items.ToArray());
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(20);
+
+            // Adjust the grid display size
+            _gridSize = EditorGUILayout.IntSlider("Grid Display Size", _gridSize, 20, 100);
 
             // Add a clear level button
             EditorGUILayout.BeginHorizontal();
@@ -111,6 +119,7 @@ namespace ThirdPixelGames.LevelBuilder
                 _levelData.stringValue = string.Empty;
             }
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(10);
 
             // Ensure we have a valid Size X and Size Y value
             var sizeX = (int)Mathf.Max(_sizeX.intValue, 0);
@@ -162,7 +171,7 @@ namespace ThirdPixelGames.LevelBuilder
                     GUI.backgroundColor = color;
 
                     // Create a button
-                    var button = GUILayout.Button(string.Empty, GUILayout.Width(40), GUILayout.Height(40));
+                    var button = GUILayout.Button(string.Empty, GUILayout.Width(_gridSize), GUILayout.Height(_gridSize));
                     if (button)
                     {
                         // If the button is pressed, update the palette ID
