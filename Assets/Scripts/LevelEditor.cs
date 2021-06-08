@@ -132,9 +132,13 @@ namespace ThirdPixelGames.LevelBuilder
             // Add a clear level button
             if (GUILayout.Button("Clear level"))
             {
-                // Reset the level data if the button is pressed
-                _levelData.stringValue = string.Empty;
-                data = new List<LevelData>();
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog("Clear level", "Are you sure you want to clear the level data? This process can not be reverted", "Yes", "No"))
+                {
+                    // Reset the level data if the button is pressed
+                    _levelData.stringValue = string.Empty;
+                    data = new List<LevelData>();
+                }
             }
 
             // End the horizontal layout for the buttons
