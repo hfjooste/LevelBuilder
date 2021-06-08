@@ -6,11 +6,17 @@ You are free to do whatever you want with this library. You're allowed to use th
 ## Requirements
 - Unity 2021.1.6f (should work on older versions as well)
 
-## Description
+## Features
 This tool allows you to easily create/edit complex levels. It was designed for 3D games, but can also be used to generate 2D levels. There's two methods you can use to generate your levels:
 <ol>
 <li><b>Static:</b> The level is specified in the editor and can't be changed without creating a new scene</li>
 <li><b>Dynamic:</b> A list of all possible levels are specified in the editor. An ID that is linked to each level is then used to generate the correct level. This method can be used to build an entire game using a single scene</li>
+</ol>
+
+There's also two different level types you can use in your game (this is specified for each level and can be mixed in the same game):
+<ol>
+<li><b>Two Dimensional:</b> This is used to generate a 2D or 2.5D level</li>
+<li><b>Three Dimensional:</b> This is used to generate a full 3D level</li>
 </ol>
 
 ## Creating a new Palette
@@ -68,6 +74,7 @@ This library includes an example of a palette, level and scene. You can find thi
 <li><b>Materials:</b> A few basic materials applied to the prefabs when generating the level</li>
 <li><b>Prefabs:</b> A few basic objects that will be instantiated when generating the level</li>
 <li><b>Scripts:</b> A basic demo script that allows you to change levels (dynamic only)</li>
-<li><b>Static.unity:</b> A basic scene that loads the specified data and generates the level</li>
-<li><b>Dynamic.unity:</b> A basic scene that contains a list of levels and generates the correct level based on the current level index</li>
+<li><b>3D.unity:</b> A basic scene that loads the specified data and generates the 3D level</li>
+<li><b>Static.unity:</b> A basic scene that loads the specified data and generates the 2.5D level</li>
+<li><b>Dynamic.unity:</b> A basic scene that contains a list of 2.5D levels and generates the correct level based on the current level index</li>
 </ul>
