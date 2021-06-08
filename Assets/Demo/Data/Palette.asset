@@ -17,7 +17,14 @@ MonoBehaviour:
     id: 5271a32f-ddc5-4104-8ead-0f1d9ab98463
     color: {r: 0, g: 0, b: 0, a: 1}
     prefab: {fileID: 5603780203012798594, guid: e1b85d4706da89c4e9650c82df51861f, type: 3}
+    offset: {x: 0, y: 0, z: 0}
   - name: Water
     id: 8c68fa05-dd57-4e3f-a018-5cc929fe79e8
     color: {r: 0, g: 0.2465775, b: 1, a: 1}
     prefab: {fileID: 5603780203012798594, guid: 940a2e028df482b48a9296f4731e7041, type: 3}
+    offset: {x: 0, y: 0, z: 0}
+  - name: Light
+    id: 56e4bff7-cd79-46e5-89a4-7aa922699efb
+    color: {r: 1, g: 0, b: 0, a: 1}
+    prefab: {fileID: 786444549207441793, guid: 22a9a3d5890b16f4da1ad70147dcc7f6, type: 3}
+    offset: {x: 0, y: -0.5, z: 0}

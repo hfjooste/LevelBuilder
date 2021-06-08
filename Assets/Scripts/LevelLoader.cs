@@ -45,7 +45,10 @@ namespace LevelBuilder
                 }
 
                 var instance = Instantiate(paletteItem.prefab);
-                instance.transform.position = new Vector3(item.x, -item.y + yOffset, 0.0f);
+                var x = item.x + paletteItem.offset.x;
+                var y = -item.y + yOffset + paletteItem.offset.y;
+                var z = paletteItem.offset.z;
+                instance.transform.position = new Vector3(x, y, z);
             }
         }
         #endregion
