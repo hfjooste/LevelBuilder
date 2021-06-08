@@ -8,30 +8,23 @@
  unless prior written consent is obtained from Third Pixel Games.
 */
 
-namespace LevelBuilder
+namespace ThirdPixelGames.LevelBuilder
 {
     using System.Linq;
 
     using UnityEngine;
 
     /// <summary>
-    /// The object responsible for reading the level file and generating the level
+    /// A static class that allows you to read data and generate the level
     /// </summary>
-    public class LevelLoader : MonoBehaviour
+    public static class LevelLoader
     {
-        #region Public Variables
+        #region Public Static Methods
         /// <summary>
-        /// The level data to load
+        /// Load the level data and generate the level
         /// </summary>
-        [Tooltip("The level data to load")]
-        public Level level;
-        #endregion
-
-        #region Unity Methods
-        /// <summary>
-        /// Awake is called when the script instance is being loaded.
-        /// </summary>
-        public void Awake()
+        /// <param name="level">The level to generate</param>
+        public static void LoadLevel(Level level)
         {
             // Load the selected level's data
             var data = JsonHelper.FromJson<LevelData>(level.data);
@@ -53,7 +46,7 @@ namespace LevelBuilder
                 }
 
                 // Instantiate the prefab
-                var instance = Instantiate(paletteItem.prefab);
+                var instance = Object.Instantiate(paletteItem.prefab);
 
                 // Set the position of the new instance
                 var x = item.x + paletteItem.offset.x;

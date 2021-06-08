@@ -1,5 +1,5 @@
-﻿/*
- 2021 © Third Pixel Games. All Rights Reserved
+/*
+ 2021 � Third Pixel Games. All Rights Reserved
 
  All information contained herein is and remains the property of Third Pixel Games. The intellectual 
  and technical concepts contained herein are proprietary to Third Pixel Games and may be covered by 
@@ -10,29 +10,19 @@
 
 namespace ThirdPixelGames.LevelBuilder
 {
-    using System;
+    using System.Collections.Generic;
 
     using UnityEngine;
 
     /// <summary>
-    /// Contains the level data for a single tile
+    /// A list of all available levels linked to an integer ID
     /// </summary>
-    [Serializable]
-    public class LevelData
+    public class LevelIndex : MonoBehaviour
     {
         /// <summary>
-        /// The x-position of the object
+        /// A list of all levels that can be loaded
         /// </summary>
-        [SerializeField] public int x;
-
-        /// <summary>
-        /// The y-position of the object
-        /// </summary>
-        [SerializeField] public int y;
-
-        /// <summary>
-        /// The ID used by the item in the palette
-        /// </summary>
-        [SerializeField] public string paletteId;
+        [Tooltip("A list of all levels that can be loaded")]
+        public List<LevelIndexItem> levels;
     }
 }

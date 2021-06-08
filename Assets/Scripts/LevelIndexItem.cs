@@ -15,24 +15,21 @@ namespace ThirdPixelGames.LevelBuilder
     using UnityEngine;
 
     /// <summary>
-    /// Contains the level data for a single tile
+    /// A level that can be loaded if we're using the specified ID
     /// </summary>
     [Serializable]
-    public class LevelData
+    public struct LevelIndexItem
     {
         /// <summary>
-        /// The x-position of the object
+        /// The ID linked to this level (used to load the level)
         /// </summary>
-        [SerializeField] public int x;
+        [Tooltip("The ID linked to this level (used to load the level)")]
+        public int id;
 
         /// <summary>
-        /// The y-position of the object
+        /// The level to load
         /// </summary>
-        [SerializeField] public int y;
-
-        /// <summary>
-        /// The ID used by the item in the palette
-        /// </summary>
-        [SerializeField] public string paletteId;
+        [Tooltip("The level to load")]
+        public Level level;
     }
 }

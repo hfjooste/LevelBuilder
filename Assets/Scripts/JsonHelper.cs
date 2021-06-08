@@ -8,7 +8,7 @@
  unless prior written consent is obtained from Third Pixel Games.
 */
 
-namespace LevelBuilder
+namespace ThirdPixelGames.LevelBuilder
 {
     using System;
 

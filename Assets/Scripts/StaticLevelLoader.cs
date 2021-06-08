@@ -1,5 +1,5 @@
-﻿/*
- 2021 © Third Pixel Games. All Rights Reserved
+/*
+ 2021 � Third Pixel Games. All Rights Reserved
 
  All information contained herein is and remains the property of Third Pixel Games. The intellectual 
  and technical concepts contained herein are proprietary to Third Pixel Games and may be covered by 
@@ -10,29 +10,31 @@
 
 namespace ThirdPixelGames.LevelBuilder
 {
-    using System;
-
     using UnityEngine;
+    using UnityEngine.Assertions;
 
     /// <summary>
-    /// Contains the level data for a single tile
+    /// Load a level that is specified in the editor
     /// </summary>
-    [Serializable]
-    public class LevelData
+    public class StaticLevelLoader : MonoBehaviour
     {
+        #region Public Variables
         /// <summary>
-        /// The x-position of the object
+        /// The level data to load
         /// </summary>
-        [SerializeField] public int x;
+        [Tooltip("The level data to load")]
+        public Level level;
+        #endregion
 
+        #region Unity Methods
         /// <summary>
-        /// The y-position of the object
+        /// Awake is called when the script instance is being loaded.
         /// </summary>
-        [SerializeField] public int y;
-
-        /// <summary>
-        /// The ID used by the item in the palette
-        /// </summary>
-        [SerializeField] public string paletteId;
+        private void Awake()
+        {
+            Assert.IsNotNull(level);
+            LevelLoader.LoadLevel(level);
+        }
+        #endregion
     }
 }

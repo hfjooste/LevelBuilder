@@ -9,7 +9,7 @@
 */
 
 #if UNITY_EDITOR
-namespace LevelBuilder
+namespace ThirdPixelGames.LevelBuilder
 {
     using System.Linq;
     using System.Collections.Generic;
