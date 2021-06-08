@@ -23,6 +23,7 @@ namespace LevelBuilder
         /// <summary>
         /// A list of all items in this palette
         /// </summary>
+        [Tooltip("A list of all items in this palette")]
         public List<PaletteItem> items;
     }
 }

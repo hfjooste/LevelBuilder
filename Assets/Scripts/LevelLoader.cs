@@ -23,6 +23,7 @@ namespace LevelBuilder
         /// <summary>
         /// The level data to load
         /// </summary>
+        [Tooltip("The level data to load")]
         public Level level;
         #endregion
 
@@ -32,19 +33,29 @@ namespace LevelBuilder
         /// </summary>
         public void Awake()
         {
+            // Load the selected level's data
             var data = JsonHelper.FromJson<LevelData>(level.data);
-            var xOffset = data.Max(m => m.x);
+
+            // Determine the vertical offset
             var yOffset = data.Max(m => m.y);
 
+            // Loop through all the items in the level's data
             foreach (var item in data)
             {
+                // Find the palette item to use
                 var paletteItem = level.palette.items.FirstOrDefault(fd => fd.id == item.paletteId);
+
+                // Check if we've found a valid palette item
                 if (paletteItem == null)
                 {
+                    // Skip this tile if we can't find a valid palette item
                     continue;
                 }
 
+                // Instantiate the prefab
                 var instance = Instantiate(paletteItem.prefab);
+
+                // Set the position of the new instance
                 var x = item.x + paletteItem.offset.x;
                 var y = -item.y + yOffset + paletteItem.offset.y;
                 var z = paletteItem.offset.z;

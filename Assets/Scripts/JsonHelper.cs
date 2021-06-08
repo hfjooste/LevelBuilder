@@ -27,8 +27,7 @@ namespace LevelBuilder
         /// <returns>The deserialized object</returns>
         public static T[] FromJson<T>(string json)
         {
-            var wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-            return wrapper.Items;
+            return JsonUtility.FromJson<Wrapper<T>>(json).Items;
         }
 
         /// <summary>
@@ -39,9 +38,7 @@ namespace LevelBuilder
         /// <returns>The serialized json string</returns>
         public static string ToJson<T>(T[] array)
         {
-            Wrapper<T> wrapper = new Wrapper<T>();
-            wrapper.Items = array;
-            return JsonUtility.ToJson(wrapper);
+            return JsonUtility.ToJson(new Wrapper<T> { Items = array });
         }
 
         /// <summary>
