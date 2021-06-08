@@ -57,7 +57,7 @@ This tool allows you to easily create/edit complex levels. It was designed for 3
 <li>Play the scene and wait for the level to be generated (should be generated instantly)</li>
 </ol>
 
-<i>Please note: It's currently using PlayerPrefs to load the current level ID. But this can easily be changed
+<i>Please note: It's currently using PlayerPrefs to load the current level ID. But this can easily be changed</i>
 
 ## Demo
 ![Demo Level](https://i.imgur.com/o9He1Hz.png)
