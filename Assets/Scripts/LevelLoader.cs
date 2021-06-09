@@ -41,7 +41,8 @@
                 {
                     // Instantiate the item
                     var position = new Vector3(dataItem.x, dataItem.y, 0.0f);
-                    var offset = dataPaletteItem.offset + new Vector3(0.0f, yOffset, 0.0f);
+                    var offset = level.levelType == LevelType.TwoDimensional ? dataPaletteItem.offset2D : dataPaletteItem.offset3D;
+                    offset += new Vector3(0.0f, yOffset, 0.0f);
                     InstantiateItem(dataPaletteItem.prefab, position, offset, level.levelType);
                 }
 
@@ -50,7 +51,8 @@
                 {
                     // Instantiate the item
                     var position = new Vector3(overlayItem.x, overlayItem.y, 0.0f);
-                    var offset = overlayPaletteItem.offset + new Vector3(0.0f, yOffset, 0.0f);
+                    var offset = level.levelType == LevelType.TwoDimensional ? overlayPaletteItem.offset2D : overlayPaletteItem.offset3D;
+                    offset += new Vector3(0.0f, yOffset, 0.0f);
                     InstantiateItem(overlayPaletteItem.prefab, position, offset, level.levelType);
                 }
             }

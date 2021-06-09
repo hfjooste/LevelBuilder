@@ -35,9 +35,15 @@
         public GameObject prefab;
 
         /// <summary>
-        /// The offset applied to the prefab instance
+        /// The offset applied to the prefab instance in 2D levels
         /// </summary>
-        [Tooltip("The offset applied to the prefab instance")]
-        public Vector3 offset;
+        [Tooltip("The offset applied to the prefab instance in 2D levels")]
+        public Vector3 offset2D;
+
+        /// <summary>
+        /// The offset applied to the prefab instance in 3D levels
+        /// </summary>
+        [Tooltip("The offset applied to the prefab instance in 3D levels")]
+        public Vector3 offset3D;
     }
 }

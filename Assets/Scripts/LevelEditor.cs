@@ -253,7 +253,7 @@ namespace ThirdPixelGames.LevelBuilder
                 if (GUILayout.Button(string.Empty, GUILayout.Width(18), GUILayout.Height(18)))
                 {
                     // Display the palette item's information if clicked
-                    var text = $"Name: {item.name}\nID: {item.id}\nColor: {item.color}\nOffset: {item.offset}\nPrefab: {item.prefab}";
+                    var text = $"Name: {item.name}\nID: {item.id}\nColor: {item.color}\nOffset 2D: {item.offset2D}\nOffset 3D: {item.offset3D}\nPrefab: {item.prefab}";
                     EditorUtility.DisplayDialog($"{item.name} Info", text, "OK");
                 }
 
