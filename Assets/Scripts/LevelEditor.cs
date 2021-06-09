@@ -52,7 +52,12 @@ namespace ThirdPixelGames.LevelBuilder
         /// <summary>
         /// The size of each block in the grid
         /// </summary>
-        private int _gridSize = 20;
+        private int _gridSize = 35;
+
+        /// <summary>
+        /// Show/hide the grid position indicators
+        /// </summary>
+        private bool _showGridPosition = true;
         #endregion
 
         #region Unity Methods
@@ -113,8 +118,11 @@ namespace ThirdPixelGames.LevelBuilder
             _selected = EditorGUILayout.Popup("Item", _selected, items.ToArray());
             EditorGUILayout.Space(20);
 
+            // Toggle the grid position indicators
+            _showGridPosition = EditorGUILayout.Toggle("Show Grid Positions", _showGridPosition);
+
             // Adjust the grid display size
-            _gridSize = EditorGUILayout.IntSlider("Grid Display Size", _gridSize, 20, 100);
+            _gridSize = EditorGUILayout.IntSlider("Grid Display Size", _gridSize, 35, 100);
 
             // Ensure we have a valid Size X and Size Y value
             var sizeX = (int)Mathf.Max(_sizeX.intValue, 0);
@@ -372,7 +380,8 @@ namespace ThirdPixelGames.LevelBuilder
                     GUI.backgroundColor = color;
 
                     // Create a button
-                    var button = GUILayout.Button(string.Empty, GUILayout.Width(_gridSize), GUILayout.Height(_gridSize));
+                    var buttonText = _showGridPosition ? $"{x},{y}" : string.Empty;
+                    var button = GUILayout.Button(buttonText, GUILayout.Width(_gridSize), GUILayout.Height(_gridSize));
                     if (button)
                     {
                         // If the button is pressed, update the palette ID
