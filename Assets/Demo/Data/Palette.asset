@@ -33,3 +33,8 @@ MonoBehaviour:
     color: {r: 0.46226418, g: 0.2584706, b: 0, a: 1}
     prefab: {fileID: 5603780203012798594, guid: 4ef829036ad66214ea149ee8c0902ded, type: 3}
     offset: {x: 0, y: 0, z: 1}
+  - name: Coin
+    id: 13fc7414-5214-4cb9-9647-4d111255dc18
+    color: {r: 1, g: 1, b: 0, a: 1}
+    prefab: {fileID: 786444549207441793, guid: 542d87c182849bd4fa18dd6bb54589fb, type: 3}
+    offset: {x: 0, y: 0, z: 1.25}

@@ -40,6 +40,11 @@ namespace ThirdPixelGames.LevelBuilder
         private SerializedProperty _levelData;
 
         /// <summary>
+        /// The Overlay Data value inside the level object
+        /// </summary>
+        private SerializedProperty _overlay;
+
+        /// <summary>
         /// The palette selected index
         /// </summary>
         private int _selected = 0;
@@ -62,6 +67,7 @@ namespace ThirdPixelGames.LevelBuilder
             _sizeY = serializedObject.FindProperty("sizeY");
             _savedPalette = serializedObject.FindProperty("palette");
             _levelData = serializedObject.FindProperty("data");
+            _overlay = serializedObject.FindProperty("overlay");
         }
 
         /// <summary>
@@ -121,6 +127,10 @@ namespace ThirdPixelGames.LevelBuilder
             var data = string.IsNullOrEmpty(_levelData.stringValue) || _levelData.stringValue.Replace(" ", "") == "{}"
                 ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_levelData.stringValue).ToList();
 
+            // Try to load the saved overlay data
+            var overlay = string.IsNullOrEmpty(_overlay.stringValue) || _overlay.stringValue.Replace(" ", "") == "{}"
+                ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_overlay.stringValue).ToList();
+
             // Add a surround button
             if (GUILayout.Button("Surround"))
             {
@@ -155,6 +165,18 @@ namespace ThirdPixelGames.LevelBuilder
                 }
             }
 
+            // Add a clear overlay button
+            if (GUILayout.Button("Clear overlay"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog("Clear overlay", "Are you sure you want to clear the overlay data? This process can not be reverted", "Yes", "No"))
+                {
+                    // Reset the overlay data if the button is pressed
+                    _overlay.stringValue = string.Empty;
+                    overlay = new List<LevelData>();
+                }
+            }
+
             // End the horizontal layout for the buttons
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(10);
@@ -164,64 +186,50 @@ namespace ThirdPixelGames.LevelBuilder
             {
                 for (var y = 0; y < sizeY; y++)
                 {
-                    // Check if we have a saved item at this position
-                    var item = data.FirstOrDefault(fd => fd.x == x && fd.y == y);
-                    if (item != null)
+                    // Check if we have saved items at this position
+                    var dataItem = data.FirstOrDefault(fd => fd.x == x && fd.y == y);
+                    var overlayItem = overlay.FirstOrDefault(fd => fd.x == x && fd.y == y);
+
+                    // Ensure we have a data item at this position
+                    if (dataItem == null)
                     {
-                        // Skip this item to avoid losing data
-                        continue;
+                        // Add a new (empty) item at this position
+                        data.Add(new LevelData()
+                        {
+                            x = x,
+                            y = y,
+                            paletteId = string.Empty
+                        });
                     }
-                    
-                    // Add a new (empty) item at this position
-                    data.Add(new LevelData()
+
+                    // Ensure we have an overlay item at this position
+                    if (overlayItem == null)
                     {
-                        x = x,
-                        y = y,
-                        paletteId = string.Empty
-                    });
+                        // Add a new (empty) item at this position
+                        overlay.Add(new LevelData()
+                        {
+                            x = x,
+                            y = y,
+                            paletteId = string.Empty
+                        });
+                    }
                 }
             }
 
             // Store the default background color
             var defaultColor = GUI.backgroundColor;
 
-            // Loop through the level data
-            for (var y = 0; y < sizeY; y++)
-            {
-                EditorGUILayout.BeginHorizontal();
+            // Generate the level grid
+            GenerateGrid(ref data, "Level Data", sizeX, sizeY);
 
-                for (var x = 0; x < sizeX; x++)
-                {
-                    // Find the correct item at this position
-                    var item = data.FirstOrDefault(fd => fd.x == x && fd.y == y);
-
-                    // Get the palette ID for this item
-                    var id = item.paletteId ?? string.Empty;
-
-                    // Set the correct color for this palette item
-                    var color = string.IsNullOrEmpty(id) ? Color.white :
-                        (palette.items.FirstOrDefault(fd => fd.id == id)?.color ?? Color.white);
-                    GUI.backgroundColor = color;
-
-                    // Create a button
-                    var button = GUILayout.Button(string.Empty, GUILayout.Width(_gridSize), GUILayout.Height(_gridSize));
-                    if (button)
-                    {
-                        // If the button is pressed, update the palette ID
-                        item.paletteId = _selected < 0 || _selected >= palette.items.Count 
-                            ? string.Empty : palette.items[_selected].id;
-                    }
-                }
-
-                EditorGUILayout.EndHorizontal();
-            }
+            // Generate the overlay grid
+            GenerateGrid(ref overlay, "Overlay Data", sizeX, sizeY);
 
             // Reset the background color
             GUI.backgroundColor = defaultColor;
 
             // Add the legend title
-            EditorGUILayout.Space(30);
-            GUILayout.Label("Legend:", EditorStyles.boldLabel);
+            GUILayout.Label("Legend", EditorStyles.boldLabel);
             EditorGUILayout.Space(5);
 
             // Loop through all items in the palette
@@ -256,6 +264,9 @@ namespace ThirdPixelGames.LevelBuilder
 
             // Save the level data
             _levelData.stringValue = JsonHelper.ToJson(data.ToArray());
+
+            // Save the overlay data
+            _overlay.stringValue = JsonHelper.ToJson(overlay.ToArray());
 
             // Apply all changes to the serialized object
             serializedObject.ApplyModifiedProperties();
@@ -323,6 +334,59 @@ namespace ThirdPixelGames.LevelBuilder
                 // Apply the new palette item
                 item.paletteId = id;
             }     
+        }
+
+        /// <summary>
+        /// Generate a grid using the specified data
+        /// </summary>
+        /// <param name="data">The current level/overlay data</param>
+        /// <param name="title">The title that is displayed above the grid</param>
+        /// <param name="sizeX">The horizontal size of the level</param>
+        /// <param name="sizeY">The vertical size of the level</param>
+        private void GenerateGrid(ref List<LevelData> data, string title, int sizeX, int sizeY)
+        {
+            // Display the title
+            GUILayout.Label(title, EditorStyles.boldLabel);
+            EditorGUILayout.Space(5);
+
+            // Get the correct palette
+            var palette = _savedPalette.objectReferenceValue as Palette;
+
+            // Loop through the level data
+            for (var y = 0; y < sizeY; y++)
+            {
+                // Start the horizontal layout
+                EditorGUILayout.BeginHorizontal();
+
+                for (var x = 0; x < sizeX; x++)
+                {
+                    // Find the correct item at this position
+                    var item = data.FirstOrDefault(fd => fd.x == x && fd.y == y);
+
+                    // Get the palette ID for this item
+                    var id = item.paletteId ?? string.Empty;
+
+                    // Set the correct color for this palette item
+                    var color = string.IsNullOrEmpty(id) ? Color.white :
+                        (palette.items.FirstOrDefault(fd => fd.id == id)?.color ?? Color.white);
+                    GUI.backgroundColor = color;
+
+                    // Create a button
+                    var button = GUILayout.Button(string.Empty, GUILayout.Width(_gridSize), GUILayout.Height(_gridSize));
+                    if (button)
+                    {
+                        // If the button is pressed, update the palette ID
+                        item.paletteId = _selected < 0 || _selected >= palette.items.Count
+                            ? string.Empty : palette.items[_selected].id;
+                    }
+                }
+
+                // End the horizontal layout
+                EditorGUILayout.EndHorizontal();
+            }
+
+            // Add a space to the bottom of the grid
+            EditorGUILayout.Space(30);
         }
         #endregion
     }

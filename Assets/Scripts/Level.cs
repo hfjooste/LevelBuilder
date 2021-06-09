@@ -32,5 +32,10 @@
         /// The serialized level data
         /// </summary>
         public string data;
+
+        /// <summary>
+        /// The serialized level overlay data
+        /// </summary>
+        public string overlay;
     }
 }
