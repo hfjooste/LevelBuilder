@@ -128,9 +128,6 @@ namespace ThirdPixelGames.LevelBuilder
             var sizeX = (int)Mathf.Max(_sizeX.intValue, 0);
             var sizeY = (int)Mathf.Max(_sizeY.intValue, 0);
 
-            // Start the horizontal layout for the buttons
-            EditorGUILayout.BeginHorizontal();
-
             // Try to load the saved level data
             var data = string.IsNullOrEmpty(_levelData.stringValue) || _levelData.stringValue.Replace(" ", "") == "{}"
                 ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_levelData.stringValue).ToList();
@@ -139,11 +136,14 @@ namespace ThirdPixelGames.LevelBuilder
             var overlay = string.IsNullOrEmpty(_overlay.stringValue) || _overlay.stringValue.Replace(" ", "") == "{}"
                 ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_overlay.stringValue).ToList();
 
+            // Start the horizontal layout for the buttons
+            EditorGUILayout.BeginHorizontal();
+
             // Add a surround button
-            if (GUILayout.Button("Surround"))
+            if (GUILayout.Button("Surround Level"))
             {
                 // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Surround", "Are you sure you want to surround the level with the selected item? This process can not be reverted", "Yes", "No"))
+                if (EditorUtility.DisplayDialog("Surround Level", "Are you sure you want to surround the level with the selected item? This process can not be reverted", "Yes", "No"))
                 {
                     // Surround the level with the selected palette item
                     Surround(ref data, sizeX, sizeY);
@@ -151,10 +151,10 @@ namespace ThirdPixelGames.LevelBuilder
             }
 
             // Add a fill button
-            if (GUILayout.Button("Fill Empty"))
+            if (GUILayout.Button("Fill Empty Level"))
             {
                 // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Fill Empty", "Are you sure you want to fill the empty tiles of the level with the selected item? This process can not be reverted", "Yes", "No"))
+                if (EditorUtility.DisplayDialog("Fill Empty Level", "Are you sure you want to fill the empty tiles of the level with the selected item? This process can not be reverted", "Yes", "No"))
                 {
                     // Fill the empty tiles of the level with the selected palette item
                     FillEmpty(ref data, sizeX, sizeY);
@@ -162,10 +162,10 @@ namespace ThirdPixelGames.LevelBuilder
             }
 
             // Add a clear level button
-            if (GUILayout.Button("Clear level"))
+            if (GUILayout.Button("Clear Level"))
             {
                 // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Clear level", "Are you sure you want to clear the level data? This process can not be reverted", "Yes", "No"))
+                if (EditorUtility.DisplayDialog("Clear Level", "Are you sure you want to clear the level data? This process can not be reverted", "Yes", "No"))
                 {
                     // Reset the level data if the button is pressed
                     _levelData.stringValue = string.Empty;
@@ -173,11 +173,39 @@ namespace ThirdPixelGames.LevelBuilder
                 }
             }
 
-            // Add a clear overlay button
-            if (GUILayout.Button("Clear overlay"))
+            // End the horizontal layout for the buttons
+            EditorGUILayout.EndHorizontal();
+
+            // Start the horizontal layout for the buttons
+            EditorGUILayout.BeginHorizontal();
+
+            // Add a surround button
+            if (GUILayout.Button("Surround Overlay"))
             {
                 // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Clear overlay", "Are you sure you want to clear the overlay data? This process can not be reverted", "Yes", "No"))
+                if (EditorUtility.DisplayDialog("Surround Overlay", "Are you sure you want to surround the overlay with the selected item? This process can not be reverted", "Yes", "No"))
+                {
+                    // Surround the level with the selected palette item
+                    Surround(ref overlay, sizeX, sizeY);
+                }
+            }
+
+            // Add a fill button
+            if (GUILayout.Button("Fill Empty Overlay"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog("Fill Empty Overlay", "Are you sure you want to fill the empty tiles of the overlay with the selected item? This process can not be reverted", "Yes", "No"))
+                {
+                    // Fill the empty tiles of the level with the selected palette item
+                    FillEmpty(ref overlay, sizeX, sizeY);
+                }
+            }
+
+            // Add a clear overlay button
+            if (GUILayout.Button("Clear Overlay"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog("Clear Overlay", "Are you sure you want to clear the overlay data? This process can not be reverted", "Yes", "No"))
                 {
                     // Reset the overlay data if the button is pressed
                     _overlay.stringValue = string.Empty;
@@ -187,6 +215,8 @@ namespace ThirdPixelGames.LevelBuilder
 
             // End the horizontal layout for the buttons
             EditorGUILayout.EndHorizontal();
+
+            // Add a space below the buttons
             EditorGUILayout.Space(10);
 
             // Populate the level data variable (if needed)
