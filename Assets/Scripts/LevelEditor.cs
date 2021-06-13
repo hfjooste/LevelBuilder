@@ -58,6 +58,16 @@ namespace ThirdPixelGames.LevelBuilder
         /// Show/hide the grid position indicators
         /// </summary>
         private bool _showGridPosition = true;
+
+        /// <summary>
+        /// Show/hide the level data grid
+        /// </summary>
+        private bool _showLevelData;
+
+        /// <summary>
+        /// Show/hide the overlay data grid
+        /// </summary>
+        private bool _showOverlayData;
         #endregion
 
         #region Unity Methods
@@ -258,10 +268,10 @@ namespace ThirdPixelGames.LevelBuilder
             var defaultColor = GUI.backgroundColor;
 
             // Generate the level grid
-            GenerateGrid(ref data, "Level Data", sizeX, sizeY);
+            GenerateGrid(ref data, ref _showLevelData, "Level Data", sizeX, sizeY);
 
             // Generate the overlay grid
-            GenerateGrid(ref overlay, "Overlay Data", sizeX, sizeY);
+            GenerateGrid(ref overlay, ref _showOverlayData, "Overlay Data", sizeX, sizeY);
 
             // Reset the background color
             GUI.backgroundColor = defaultColor;
@@ -378,14 +388,28 @@ namespace ThirdPixelGames.LevelBuilder
         /// Generate a grid using the specified data
         /// </summary>
         /// <param name="data">The current level/overlay data</param>
+        /// <param name="showGrid">Used to show/hide the generated grid</param>
         /// <param name="title">The title that is displayed above the grid</param>
         /// <param name="sizeX">The horizontal size of the level</param>
         /// <param name="sizeY">The vertical size of the level</param>
-        private void GenerateGrid(ref List<LevelData> data, string title, int sizeX, int sizeY)
+        private void GenerateGrid(ref List<LevelData> data, ref bool showGrid, string title, int sizeX, int sizeY)
         {
             // Display the title
-            GUILayout.Label(title, EditorStyles.boldLabel);
+            showGrid = EditorGUILayout.BeginFoldoutHeaderGroup(showGrid, title);
+            
+            // Check if we're displaying the grid
+            if (!showGrid)
+            {
+                // End the foldout group
+                EditorGUILayout.EndFoldoutHeaderGroup();
+                return;
+            }
+            
+            // Add a space above the grid
             EditorGUILayout.Space(5);
+            
+            // Get the current background color
+            var backgroundColor = GUI.backgroundColor; 
 
             // Get the correct palette
             var palette = _savedPalette.objectReferenceValue as Palette;
@@ -423,6 +447,12 @@ namespace ThirdPixelGames.LevelBuilder
                 // End the horizontal layout
                 EditorGUILayout.EndHorizontal();
             }
+            
+            // End the foldout group
+            EditorGUILayout.EndFoldoutHeaderGroup();
+            
+            // Restore the background color
+            GUI.backgroundColor = backgroundColor;
 
             // Add a space to the bottom of the grid
             EditorGUILayout.Space(30);
