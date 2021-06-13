@@ -23,7 +23,7 @@
             var overlay = JsonHelper.FromJson<LevelData>(level.overlay);
 
             // Determine the vertical offset
-            var yOffset = data.Max(m => m.y);
+            var yOffset = data.Max(m => m.y) * level.scale;
 
             // Loop through all the items in the level's data
             for (var i = 0; i < data.Length; i++)
@@ -40,20 +40,20 @@
                 if (dataPaletteItem != null)
                 {
                     // Instantiate the item
-                    var position = new Vector3(dataItem.x, dataItem.y, 0.0f);
+                    var position = new Vector3(dataItem.x * level.scale, dataItem.y * level.scale, 0.0f);
                     var offset = level.levelType == LevelType.TwoDimensional ? dataPaletteItem.offset2D : dataPaletteItem.offset3D;
                     offset += new Vector3(0.0f, yOffset, 0.0f);
-                    InstantiateItem(dataPaletteItem.prefab, position, offset, level.levelType);
+                    InstantiateItem(dataPaletteItem.prefab, position, offset, level.scale, level.levelType);
                 }
 
                 // Check if we've found a valid palette item for the overlay object
                 if (overlayPaletteItem != null)
                 {
                     // Instantiate the item
-                    var position = new Vector3(overlayItem.x, overlayItem.y, 0.0f);
+                    var position = new Vector3(overlayItem.x * level.scale, overlayItem.y * level.scale, 0.0f);
                     var offset = level.levelType == LevelType.TwoDimensional ? overlayPaletteItem.offset2D : overlayPaletteItem.offset3D;
                     offset += new Vector3(0.0f, yOffset, 0.0f);
-                    InstantiateItem(overlayPaletteItem.prefab, position, offset, level.levelType);
+                    InstantiateItem(overlayPaletteItem.prefab, position, offset, level.scale, level.levelType);
                 }
             }
         }
@@ -66,8 +66,9 @@
         /// <param name="prefab">The prefab to instantiate</param>
         /// <param name="position">The position of the new instance</param>
         /// <param name="offset">The offset applied to the new instance</param>
+        /// <param name="scale">The scale applied to the new instance</param>
         /// <param name="levelType">The type of level to generate</param>
-        private static void InstantiateItem(GameObject prefab, Vector3 position, Vector3 offset, LevelType levelType)
+        private static void InstantiateItem(GameObject prefab, Vector3 position, Vector3 offset, float scale, LevelType levelType)
         {
             // Instantiate the prefab
             var instance = Object.Instantiate(prefab);
@@ -88,6 +89,12 @@
 
             // Set the position of the new instance
             instance.transform.position = new Vector3(x, y, z);
+            
+            // Set the scale of the new instance
+            var scaleX = instance.transform.localScale.x * scale;
+            var scaleY = instance.transform.localScale.y * scale;
+            var scaleZ = instance.transform.localScale.z * scale;
+            instance.transform.localScale = new Vector3(scaleX, scaleY, scaleZ);
         }
         #endregion
     }

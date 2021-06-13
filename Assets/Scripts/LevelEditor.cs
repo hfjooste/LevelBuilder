@@ -23,6 +23,11 @@ namespace ThirdPixelGames.LevelBuilder
         /// The type of level to generate
         /// </summary>
         private SerializedProperty _levelType;
+        
+        /// <summary>
+        /// The scale value inside the level object
+        /// </summary>
+        private SerializedProperty _scale;
 
         /// <summary>
         /// The Size X value inside the level object
@@ -84,6 +89,7 @@ namespace ThirdPixelGames.LevelBuilder
             // Find the properties we need to build a level
             _levelName = serializedObject.FindProperty("levelName");
             _levelType = serializedObject.FindProperty("levelType");
+            _scale = serializedObject.FindProperty("scale");
             _sizeX = serializedObject.FindProperty("sizeX");
             _sizeY = serializedObject.FindProperty("sizeY");
             _savedPalette = serializedObject.FindProperty("palette");
@@ -118,6 +124,9 @@ namespace ThirdPixelGames.LevelBuilder
             
             // Edit the level type
             _levelType.enumValueIndex = (int)(LevelType)EditorGUILayout.EnumPopup("Level Type", (LevelType)_levelType.enumValueIndex);
+            
+            // Edit the scale variable
+            EditorGUILayout.PropertyField(_scale);
 
             // Edit the Size X and Size Y variables
             EditorGUILayout.PropertyField(_sizeX);

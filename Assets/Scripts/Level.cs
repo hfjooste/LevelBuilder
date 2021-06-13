@@ -22,6 +22,11 @@
         /// The palette used to generate this level
         /// </summary>
         public Palette palette;
+        
+        /// <summary>
+        /// The scale applied to each item in the level
+        /// </summary>
+        public float scale = 1.0f;
 
         /// <summary>
         /// The horizontal size of the level
