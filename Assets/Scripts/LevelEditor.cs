@@ -15,6 +15,11 @@ namespace ThirdPixelGames.LevelBuilder
     {
         #region Private Variables
         /// <summary>
+        /// The level's name
+        /// </summary>
+        private SerializedProperty _levelName;
+        
+        /// <summary>
         /// The type of level to generate
         /// </summary>
         private SerializedProperty _levelType;
@@ -77,6 +82,7 @@ namespace ThirdPixelGames.LevelBuilder
         private void OnEnable()
         {
             // Find the properties we need to build a level
+            _levelName = serializedObject.FindProperty("levelName");
             _levelType = serializedObject.FindProperty("levelType");
             _sizeX = serializedObject.FindProperty("sizeX");
             _sizeY = serializedObject.FindProperty("sizeY");
@@ -106,7 +112,10 @@ namespace ThirdPixelGames.LevelBuilder
                 EditorGUILayout.LabelField("Please specify a palette");
                 return;
             }
-
+            
+            // Edit the level name
+            EditorGUILayout.PropertyField(_levelName);
+            
             // Edit the level type
             _levelType.enumValueIndex = (int)(LevelType)EditorGUILayout.EnumPopup("Level Type", (LevelType)_levelType.enumValueIndex);
 

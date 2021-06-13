@@ -9,9 +9,14 @@
     public class Level : ScriptableObject
     {
         /// <summary>
+        /// The level's name
+        /// </summary>
+        public string levelName;
+        
+        /// <summary>
         /// The type of level to generate
         /// </summary>
-        [SerializeField] public LevelType levelType;
+        public LevelType levelType;
 
         /// <summary>
         /// The palette used to generate this level

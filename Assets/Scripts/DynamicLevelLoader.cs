@@ -7,6 +7,13 @@ namespace ThirdPixelGames.LevelBuilder
 
     public class DynamicLevelLoader : MonoBehaviour
     {
+        #region Public Variables
+        /// <summary>
+        /// The current level that was generated
+        /// </summary>
+        [HideInInspector] public Level level;
+        #endregion
+        
         #region Unity Methods
         /// <summary>
         /// Awake is called when the script instance is being loaded.
@@ -18,8 +25,8 @@ namespace ThirdPixelGames.LevelBuilder
             Assert.IsNotNull(levelIndex);
 
             // Get the correct level based on the level ID
-            var level = levelIndex.levels.FirstOrDefault(fd => fd.id == GetLevelId());
-            LevelLoader.LoadLevel(level.level);
+            level = levelIndex.levels.FirstOrDefault(fd => fd.id == GetLevelId()).level;
+            LevelLoader.LoadLevel(level);
         }
         #endregion
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edee40013733e534abcc3b70b4d8e1df, type: 3}
   m_Name: Level 2
   m_EditorClassIdentifier: 
+  levelName: Level 2
   levelType: 0
   palette: {fileID: 11400000, guid: 5019ed0a83ccb0b458686808f1a27ef7, type: 2}
   sizeX: 10
