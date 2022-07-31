@@ -1,5 +1,6 @@
 ﻿namespace ThirdPixelGames.LevelBuilder
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     using UnityEngine;
@@ -21,6 +22,13 @@
 
             // Load the selected level's overlay data
             var overlay = JsonHelper.FromJson<LevelData>(level.overlay);
+
+            // Load the additional layer data
+            var additionalLayers = new List<LevelData[]>();
+            foreach (var layer in level.additionalLayers)
+            {
+                additionalLayers.Add(JsonHelper.FromJson<LevelData>(layer));
+            }
 
             // Determine the vertical offset
             var yOffset = data.Max(m => m.y) * level.scale;
@@ -54,6 +62,32 @@
                     var offset = level.levelType == LevelType.TwoDimensional ? overlayPaletteItem.offset2D : overlayPaletteItem.offset3D;
                     offset += new Vector3(0.0f, yOffset, 0.0f);
                     InstantiateItem(overlayPaletteItem.prefab, position, offset, level.scale, level.levelType);
+                }
+
+                // Loop through all the additional layers
+                foreach (var layer in additionalLayers)
+                {
+                    // Check for a valid layer item
+                    if (layer == null || layer.Length < i)
+                    {
+                        continue;
+                    }
+
+                    // Get the item we're supposed to instantiate
+                    var layerItem = layer[i];
+
+                    // Find the palette item to use
+                    var layerPaletteItem = level.palette.items.FirstOrDefault(fd => fd.id == layerItem.paletteId);
+
+                    // Check if we've found a valid palette item for the layer object
+                    if (layerPaletteItem != null)
+                    {
+                        // Instantiate the item
+                        var position = new Vector3(layerItem.x * level.scale, layerItem.y * level.scale, 0.0f);
+                        var offset = level.levelType == LevelType.TwoDimensional ? layerPaletteItem.offset2D : layerPaletteItem.offset3D;
+                        offset += new Vector3(0.0f, yOffset, 0.0f);
+                        InstantiateItem(layerPaletteItem.prefab, position, offset, level.scale, level.levelType);
+                    }
                 }
             }
         }

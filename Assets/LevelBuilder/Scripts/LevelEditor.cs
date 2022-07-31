@@ -55,6 +55,16 @@ namespace ThirdPixelGames.LevelBuilder
         private SerializedProperty _overlay;
 
         /// <summary>
+        /// The amount of additional layers for the level
+        /// </summary>
+        private SerializedProperty _additionalLayersCount;
+
+        /// <summary>
+        /// The Additional Layer Data value inside the level object
+        /// </summary>
+        private SerializedProperty _additionalLayers;
+
+        /// <summary>
         /// The palette selected index
         /// </summary>
         private int _selected = 0;
@@ -78,6 +88,11 @@ namespace ThirdPixelGames.LevelBuilder
         /// Show/hide the overlay data grid
         /// </summary>
         private bool _showOverlayData;
+
+        /// <summary>
+        /// Show/hide the additional layer data grid
+        /// </summary>
+        private bool[] _showAdditionalData;
         #endregion
 
         #region Unity Methods
@@ -95,6 +110,8 @@ namespace ThirdPixelGames.LevelBuilder
             _savedPalette = serializedObject.FindProperty("palette");
             _levelData = serializedObject.FindProperty("data");
             _overlay = serializedObject.FindProperty("overlay");
+            _additionalLayersCount = serializedObject.FindProperty("additionalLayersCount");
+            _additionalLayers = serializedObject.FindProperty("additionalLayers");
         }
 
         /// <summary>
@@ -131,6 +148,7 @@ namespace ThirdPixelGames.LevelBuilder
             // Edit the Size X and Size Y variables
             EditorGUILayout.PropertyField(_sizeX);
             EditorGUILayout.PropertyField(_sizeY);
+            EditorGUILayout.PropertyField(_additionalLayersCount);
 
             // Add the palette items to the dropdown list
             var items = new List<string>();
@@ -158,138 +176,51 @@ namespace ThirdPixelGames.LevelBuilder
 
             // Try to load the saved level data
             var data = string.IsNullOrEmpty(_levelData.stringValue) || _levelData.stringValue.Replace(" ", "") == "{}"
-                ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_levelData.stringValue).ToList();
+                ? GetEmptyLevelData(sizeX, sizeY) : JsonHelper.FromJson<LevelData>(_levelData.stringValue);
 
             // Try to load the saved overlay data
             var overlay = string.IsNullOrEmpty(_overlay.stringValue) || _overlay.stringValue.Replace(" ", "") == "{}"
-                ? new List<LevelData>() : JsonHelper.FromJson<LevelData>(_overlay.stringValue).ToList();
-
-            // Start the horizontal layout for the buttons
-            EditorGUILayout.BeginHorizontal();
-
-            // Add a surround button
-            if (GUILayout.Button("Surround Level"))
-            {
-                // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Surround Level", "Are you sure you want to surround the level with the selected item? This process can not be reverted", "Yes", "No"))
-                {
-                    // Surround the level with the selected palette item
-                    Surround(ref data, sizeX, sizeY);
-                }
-            }
-
-            // Add a fill button
-            if (GUILayout.Button("Fill Empty Level"))
-            {
-                // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Fill Empty Level", "Are you sure you want to fill the empty tiles of the level with the selected item? This process can not be reverted", "Yes", "No"))
-                {
-                    // Fill the empty tiles of the level with the selected palette item
-                    FillEmpty(ref data, sizeX, sizeY);
-                }
-            }
-
-            // Add a clear level button
-            if (GUILayout.Button("Clear Level"))
-            {
-                // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Clear Level", "Are you sure you want to clear the level data? This process can not be reverted", "Yes", "No"))
-                {
-                    // Reset the level data if the button is pressed
-                    _levelData.stringValue = string.Empty;
-                    data = new List<LevelData>();
-                }
-            }
-
-            // End the horizontal layout for the buttons
-            EditorGUILayout.EndHorizontal();
-
-            // Start the horizontal layout for the buttons
-            EditorGUILayout.BeginHorizontal();
-
-            // Add a surround button
-            if (GUILayout.Button("Surround Overlay"))
-            {
-                // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Surround Overlay", "Are you sure you want to surround the overlay with the selected item? This process can not be reverted", "Yes", "No"))
-                {
-                    // Surround the level with the selected palette item
-                    Surround(ref overlay, sizeX, sizeY);
-                }
-            }
-
-            // Add a fill button
-            if (GUILayout.Button("Fill Empty Overlay"))
-            {
-                // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Fill Empty Overlay", "Are you sure you want to fill the empty tiles of the overlay with the selected item? This process can not be reverted", "Yes", "No"))
-                {
-                    // Fill the empty tiles of the level with the selected palette item
-                    FillEmpty(ref overlay, sizeX, sizeY);
-                }
-            }
-
-            // Add a clear overlay button
-            if (GUILayout.Button("Clear Overlay"))
-            {
-                // Show a confirmation dialog
-                if (EditorUtility.DisplayDialog("Clear Overlay", "Are you sure you want to clear the overlay data? This process can not be reverted", "Yes", "No"))
-                {
-                    // Reset the overlay data if the button is pressed
-                    _overlay.stringValue = string.Empty;
-                    overlay = new List<LevelData>();
-                }
-            }
-
-            // End the horizontal layout for the buttons
-            EditorGUILayout.EndHorizontal();
-
-            // Add a space below the buttons
-            EditorGUILayout.Space(10);
-
-            // Populate the level data variable (if needed)
-            for (var x = 0; x < sizeX; x++)
-            {
-                for (var y = 0; y < sizeY; y++)
-                {
-                    // Check if we have saved items at this position
-                    var dataItem = data.FirstOrDefault(fd => fd.x == x && fd.y == y);
-                    var overlayItem = overlay.FirstOrDefault(fd => fd.x == x && fd.y == y);
-
-                    // Ensure we have a data item at this position
-                    if (dataItem == null)
-                    {
-                        // Add a new (empty) item at this position
-                        data.Add(new LevelData()
-                        {
-                            x = x,
-                            y = y,
-                            paletteId = string.Empty
-                        });
-                    }
-
-                    // Ensure we have an overlay item at this position
-                    if (overlayItem == null)
-                    {
-                        // Add a new (empty) item at this position
-                        overlay.Add(new LevelData()
-                        {
-                            x = x,
-                            y = y,
-                            paletteId = string.Empty
-                        });
-                    }
-                }
-            }
+                ? GetEmptyLevelData(sizeX, sizeY) : JsonHelper.FromJson<LevelData>(_overlay.stringValue);
 
             // Store the default background color
             var defaultColor = GUI.backgroundColor;
 
             // Generate the level grid
-            GenerateGrid(ref data, ref _showLevelData, "Level Data", sizeX, sizeY);
+            data = GenerateGrid(data, ref _showLevelData, "Level Data", sizeX, sizeY);
 
             // Generate the overlay grid
-            GenerateGrid(ref overlay, ref _showOverlayData, "Overlay Data", sizeX, sizeY);
+            overlay = GenerateGrid(overlay, ref _showOverlayData, "Overlay Data", sizeX, sizeY);
+
+            // Initialize the additional data visiblity flags
+            if (_showAdditionalData == null || _showAdditionalData.Length != _additionalLayersCount.intValue)
+            {
+                _showAdditionalData = new bool[_additionalLayersCount.intValue];
+            }
+
+            // Try to load the saved additional layer data
+            var additionalLayers = new List<LevelData[]>();
+            for (var i = 0; i < _additionalLayersCount.intValue; i++)
+            {
+                // Get the layer data
+                var additionalLayer = _additionalLayers.arraySize <= i
+                    ? string.Empty
+                    : _additionalLayers.GetArrayElementAtIndex(i)?.stringValue;
+
+                // Add empty data if nothing is found
+                if (string.IsNullOrEmpty(additionalLayer))
+                {
+                    _additionalLayers.InsertArrayElementAtIndex(i);
+                }
+                
+                // Convert the json to LevelData
+                var additionalLayerData = !string.IsNullOrEmpty(additionalLayer) && additionalLayer.Replace(" ", "") != "{}"
+                    ? JsonHelper.FromJson<LevelData>(additionalLayer)
+                    : GetEmptyLevelData(sizeX, sizeY);
+
+                // Generate the grid
+                additionalLayers.Add(GenerateGrid(additionalLayerData, ref _showAdditionalData[i],
+                    $"Additional Layer #{i + 1}", sizeX, sizeY));
+            }
 
             // Reset the background color
             GUI.backgroundColor = defaultColor;
@@ -334,6 +265,14 @@ namespace ThirdPixelGames.LevelBuilder
             // Save the overlay data
             _overlay.stringValue = JsonHelper.ToJson(overlay.ToArray());
 
+            // Save the additional layer data
+            _additionalLayers.ClearArray();
+            for (var i = 0; i < _additionalLayersCount.intValue; i++)
+            {
+                _additionalLayers.InsertArrayElementAtIndex(i);
+                _additionalLayers.GetArrayElementAtIndex(i).stringValue = JsonHelper.ToJson(additionalLayers[i].ToArray());
+            }
+
             // Apply all changes to the serialized object
             serializedObject.ApplyModifiedProperties();
         }
@@ -341,12 +280,39 @@ namespace ThirdPixelGames.LevelBuilder
 
         #region Private Methods
         /// <summary>
+        /// Get a list of empty level data
+        /// </summary>
+        /// <param name="sizeX">The horizontal size of the level</param>
+        /// <param name="sizeY">The vertical size of the level</param>
+        /// <returns>An array of empty level data</returns>
+        private LevelData[] GetEmptyLevelData(int sizeX, int sizeY)
+        {
+            var data = new List<LevelData>();
+
+            // Generate empty level data
+            for (var x = 0; x < sizeX; x++)
+            {
+                for (var y = 0; y < sizeY; y++)
+                {
+                    data.Add(new LevelData
+                    {
+                        x = x,
+                        y = y,
+                        paletteId = string.Empty
+                    });
+                }
+            }
+
+            return data.ToArray();
+        }
+
+        /// <summary>
         /// Surround the level with the selected palette item
         /// </summary>
         /// <param name="data">The current level data</param>
         /// <param name="sizeX">The horizontal size of the level</param>
         /// <param name="sizeY">The vertical size of the level</param>
-        private void Surround(ref List<LevelData> data,  int sizeX, int sizeY)
+        private void Surround(ref LevelData[] data, int sizeX, int sizeY)
         {
             // Get the correct palette item ID
             var palette = _savedPalette.objectReferenceValue as Palette;
@@ -384,7 +350,7 @@ namespace ThirdPixelGames.LevelBuilder
         /// <param name="data">The current level data</param>
         /// <param name="sizeX">The horizontal size of the level</param>
         /// <param name="sizeY">The vertical size of the level</param>
-        private void FillEmpty(ref List<LevelData> data, int sizeX, int sizeY)
+        private void FillEmpty(ref LevelData[] data, int sizeX, int sizeY)
         {
             // Get the correct palette item ID
             var palette = _savedPalette.objectReferenceValue as Palette;
@@ -410,7 +376,8 @@ namespace ThirdPixelGames.LevelBuilder
         /// <param name="title">The title that is displayed above the grid</param>
         /// <param name="sizeX">The horizontal size of the level</param>
         /// <param name="sizeY">The vertical size of the level</param>
-        private void GenerateGrid(ref List<LevelData> data, ref bool showGrid, string title, int sizeX, int sizeY)
+        /// <returns>The updated level data</returns>
+        private LevelData[] GenerateGrid(LevelData[] data, ref bool showGrid, string title, int sizeX, int sizeY)
         {
             // Display the title
             showGrid = EditorGUILayout.BeginFoldoutHeaderGroup(showGrid, title);
@@ -420,12 +387,54 @@ namespace ThirdPixelGames.LevelBuilder
             {
                 // End the foldout group
                 EditorGUILayout.EndFoldoutHeaderGroup();
-                return;
+                return data;
             }
             
             // Add a space above the grid
             EditorGUILayout.Space(5);
-            
+
+            // Start the horizontal layout for the buttons
+            EditorGUILayout.BeginHorizontal();
+
+            // Add a surround button
+            if (GUILayout.Button("Surround"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog($"Surround ({title})", "Are you sure you want to surround this layer with the selected item? This process can not be reverted", "Yes", "No"))
+                {
+                    // Surround the layer with the selected palette item
+                    Surround(ref data, sizeX, sizeY);
+                }
+            }
+
+            // Add a fill button
+            if (GUILayout.Button("Fill Empty"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog($"Fill Empty ({title})", "Are you sure you want to fill the empty tiles of this layer with the selected item? This process can not be reverted", "Yes", "No"))
+                {
+                    // Fill the empty tiles of the layer with the selected palette item
+                    FillEmpty(ref data, sizeX, sizeY);
+                }
+            }
+
+            // Add a clear overlay button
+            if (GUILayout.Button("Clear"))
+            {
+                // Show a confirmation dialog
+                if (EditorUtility.DisplayDialog($"Clear ({title})", "Are you sure you want to clear this layer? This process can not be reverted", "Yes", "No"))
+                {
+                    // Reset the layer data if the button is pressed                    
+                    data = GetEmptyLevelData(sizeX, sizeY);
+                }
+            }
+
+            // End the horizontal layout for the buttons
+            EditorGUILayout.EndHorizontal();
+
+            // Add a space below the buttons
+            EditorGUILayout.Space(10);
+
             // Get the current background color
             var backgroundColor = GUI.backgroundColor; 
 
@@ -474,6 +483,9 @@ namespace ThirdPixelGames.LevelBuilder
 
             // Add a space to the bottom of the grid
             EditorGUILayout.Space(30);
+
+            // Return the updated data
+            return data;
         }
         #endregion
     }

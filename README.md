@@ -4,7 +4,7 @@
 You are free to do whatever you want with this library. You're allowed to use this for commercial projects, edit the source code and even redistribute the source code. No attribution is required (but appreciated)
 
 ## Requirements
-- Unity 2021.1.6f (should work on older versions as well)
+- Unity 2021.3.5f1 (should work on older versions as well)
 
 ## Features
 This tool allows you to easily create/edit complex levels. It was designed for 3D games, but can also be used to generate 2D levels. There's two methods you can use to generate your levels:
