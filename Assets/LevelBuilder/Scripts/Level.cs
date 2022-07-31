@@ -47,5 +47,15 @@
         /// The serialized level overlay data
         /// </summary>
         public string overlay;
+
+        /// <summary>
+        /// The amount of additional layers
+        /// </summary>
+        public int additionalLayersCount;
+
+        /// <summary>
+        /// The serialized additional layer data
+        /// </summary>
+        public string[] additionalLayers;
     }
 }
