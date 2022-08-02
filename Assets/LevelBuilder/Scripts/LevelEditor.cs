@@ -175,24 +175,20 @@ namespace ThirdPixelGames.LevelBuilder
             // Adjust the grid display size
             _gridSize = EditorGUILayout.IntSlider("Grid Display Size", _gridSize, 35, 100);
 
-            // Ensure we have a valid Size X and Size Y value
-            var sizeX = (int)Mathf.Max(_sizeX.intValue, 0);
-            var sizeY = (int)Mathf.Max(_sizeY.intValue, 0);
-
             // Try to load the saved level data
-            var data = GetLevelData(_levelData.stringValue, sizeX, sizeY);
+            var data = GetLevelData(_levelData.stringValue, _sizeX.intValue, _sizeY.intValue);
 
             // Try to load the saved overlay data
-            var overlay = GetLevelData(_overlay.stringValue, sizeX, sizeY);
+            var overlay = GetLevelData(_overlay.stringValue, _sizeX.intValue, _sizeY.intValue);
 
             // Store the default background color
             var defaultColor = GUI.backgroundColor;
 
             // Generate the level grid
-            data = GenerateGrid(data, ref _showLevelData, "Level Data", sizeX, sizeY);
+            data = GenerateGrid(data, ref _showLevelData, "Level Data", _sizeX.intValue, _sizeY.intValue);
 
             // Generate the overlay grid
-            overlay = GenerateGrid(overlay, ref _showOverlayData, "Overlay Data", sizeX, sizeY);
+            overlay = GenerateGrid(overlay, ref _showOverlayData, "Overlay Data", _sizeX.intValue, _sizeY.intValue);
 
             // Initialize the additional data visiblity flags
             if (_showAdditionalData == null || _showAdditionalData.Length != _additionalLayersCount.intValue)
@@ -216,11 +212,11 @@ namespace ThirdPixelGames.LevelBuilder
                 }
                 
                 // Convert the json to LevelData
-                var additionalLayerData = GetLevelData(additionalLayer, sizeX, sizeY);
+                var additionalLayerData = GetLevelData(additionalLayer, _sizeX.intValue, _sizeY.intValue);
 
                 // Generate the grid
                 additionalLayers.Add(GenerateGrid(additionalLayerData, ref _showAdditionalData[i],
-                    $"Additional Layer #{i + 1}", sizeX, sizeY));
+                    $"Additional Layer #{i + 1}", _sizeX.intValue, _sizeY.intValue));
             }
 
             // Reset the background color
