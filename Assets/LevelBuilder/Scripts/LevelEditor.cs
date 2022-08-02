@@ -175,12 +175,10 @@ namespace ThirdPixelGames.LevelBuilder
             var sizeY = (int)Mathf.Max(_sizeY.intValue, 0);
 
             // Try to load the saved level data
-            var data = string.IsNullOrEmpty(_levelData.stringValue) || _levelData.stringValue.Replace(" ", "") == "{}"
-                ? GetEmptyLevelData(sizeX, sizeY) : JsonHelper.FromJson<LevelData>(_levelData.stringValue);
+            var data = GetLevelData(_levelData.stringValue, sizeX, sizeY);
 
             // Try to load the saved overlay data
-            var overlay = string.IsNullOrEmpty(_overlay.stringValue) || _overlay.stringValue.Replace(" ", "") == "{}"
-                ? GetEmptyLevelData(sizeX, sizeY) : JsonHelper.FromJson<LevelData>(_overlay.stringValue);
+            var overlay = GetLevelData(_overlay.stringValue, sizeX, sizeY);
 
             // Store the default background color
             var defaultColor = GUI.backgroundColor;
@@ -213,9 +211,7 @@ namespace ThirdPixelGames.LevelBuilder
                 }
                 
                 // Convert the json to LevelData
-                var additionalLayerData = !string.IsNullOrEmpty(additionalLayer) && additionalLayer.Replace(" ", "") != "{}"
-                    ? JsonHelper.FromJson<LevelData>(additionalLayer)
-                    : GetEmptyLevelData(sizeX, sizeY);
+                var additionalLayerData = GetLevelData(additionalLayer, sizeX, sizeY);
 
                 // Generate the grid
                 additionalLayers.Add(GenerateGrid(additionalLayerData, ref _showAdditionalData[i],
@@ -280,16 +276,27 @@ namespace ThirdPixelGames.LevelBuilder
 
         #region Private Methods
         /// <summary>
-        /// Get a list of empty level data
+        /// Get a list of level data (or empty level data if nothing is saved)
         /// </summary>
+        /// <param name="json">The saved level data</param>
         /// <param name="sizeX">The horizontal size of the level</param>
         /// <param name="sizeY">The vertical size of the level</param>
         /// <returns>An array of empty level data</returns>
-        private LevelData[] GetEmptyLevelData(int sizeX, int sizeY)
+        private LevelData[] GetLevelData(string json, int sizeX, int sizeY)
         {
             var data = new List<LevelData>();
+            if (!string.IsNullOrEmpty(json))
+            {
+                data = JsonHelper.FromJson<LevelData>(json).ToList();
+            }
+
+            if (data != null && sizeX * sizeY > 0 && data.Count == sizeX * sizeY)
+            {
+                return data.ToArray();
+            }
 
             // Generate empty level data
+            data.Clear();
             for (var x = 0; x < sizeX; x++)
             {
                 for (var y = 0; y < sizeY; y++)
@@ -383,7 +390,7 @@ namespace ThirdPixelGames.LevelBuilder
             showGrid = EditorGUILayout.BeginFoldoutHeaderGroup(showGrid, title);
             
             // Check if we're displaying the grid
-            if (!showGrid)
+            if (!showGrid || sizeX <= 0 || sizeY <= 0)
             {
                 // End the foldout group
                 EditorGUILayout.EndFoldoutHeaderGroup();
@@ -425,7 +432,7 @@ namespace ThirdPixelGames.LevelBuilder
                 if (EditorUtility.DisplayDialog($"Clear ({title})", "Are you sure you want to clear this layer? This process can not be reverted", "Yes", "No"))
                 {
                     // Reset the layer data if the button is pressed                    
-                    data = GetEmptyLevelData(sizeX, sizeY);
+                    data = GetLevelData(string.Empty, sizeX, sizeY);
                 }
             }
 
