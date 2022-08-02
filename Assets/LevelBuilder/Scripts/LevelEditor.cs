@@ -150,6 +150,11 @@ namespace ThirdPixelGames.LevelBuilder
             EditorGUILayout.PropertyField(_sizeY);
             EditorGUILayout.PropertyField(_additionalLayersCount);
 
+            // Ensure we have valid values
+            _sizeX.intValue = Mathf.Max(_sizeX.intValue, 0);
+            _sizeY.intValue = Mathf.Max(_sizeY.intValue, 0);
+            _additionalLayersCount.intValue = Mathf.Max(_additionalLayersCount.intValue, 0);
+
             // Add the palette items to the dropdown list
             var items = new List<string>();
             foreach (var item in palette.items)
